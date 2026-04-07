@@ -1,0 +1,9 @@
+name = "portfolio-backend"
+main = "src/index.ts"
+compatibility_date = "2024-12-16"
+
+[env.production]
+name = "portfolio-backend-prod"
+routes = [
+  { pattern = "api.example.com/*", zone_name = "example.com" }
+]
