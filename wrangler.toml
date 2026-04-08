@@ -2,8 +2,27 @@ name = "portfolio-backend"
 main = "src/index.ts"
 compatibility_date = "2024-12-16"
 
-[env.production]
-name = "portfolio-backend-prod"
-routes = [
-  { pattern = "api.example.com/*", zone_name = "example.com" }
-]
+[[d1_databases]]
+binding = "portfolio_database"
+database_name = "portfolio-database"
+database_id = "37de9e9c-0b18-4a18-8858-229ffcbd423d"
+
+# Variables NO sensibles (públicas)
+[vars]
+NOTIFICATION_EMAIL_ENABLED = "true"
+NOTIFICATION_TELEGRAM_ENABLED = "true"
+NOTIFICATION_DISCORD_ENABLED = "false"
+NOTIFICATION_WEBHOOK_ENABLED = "false"
+
+# ⚠️ Las variables sensibles se configuran con: npx wrangler secret put <NOMBRE>
+# Secrets requeridos:
+#   - JWT_SECRET (obligatorio)
+# Secrets opcionales (según qué notificaciones habilites):
+#   - NOTIFICATION_EMAIL_API_KEY
+#   - NOTIFICATION_EMAIL_FROM
+#   - NOTIFICATION_EMAIL_TO
+#   - NOTIFICATION_TELEGRAM_BOT_TOKEN
+#   - NOTIFICATION_TELEGRAM_CHAT_ID
+#   - NOTIFICATION_DISCORD_WEBHOOK_URL
+#   - NOTIFICATION_WEBHOOK_URL
+#   - NOTIFICATION_WEBHOOK_SECRET

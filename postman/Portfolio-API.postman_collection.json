@@ -1,0 +1,780 @@
+{
+  "info": {
+    "_postman_id": "portfolio-api-collection",
+    "name": "Portfolio API",
+    "description": "API Collection para Portfolio Backend - Cloudflare Workers + D1\n\n## Configuración\n1. Crear un Environment con las variables:\n   - `baseUrl`: URL base del API (ej: http://localhost:8787 o https://tu-worker.workers.dev)\n   - `token`: Token JWT (se autocompleta después de login)\n\n## Autenticación\nEl token JWT se guarda automáticamente después de un login exitoso.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8787",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "description": "Endpoints de autenticación",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.data && response.data.token) {",
+                  "        pm.collectionVariables.set('token', response.data.token);",
+                  "        console.log('Token guardado exitosamente');",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"admin@example.com\",\n    \"password\": \"yourpassword\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"newuser@example.com\",\n    \"password\": \"SecurePass123!\",\n    \"name\": \"New User\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api", "auth", "register"] }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/auth/logout", "host": ["{{baseUrl}}"], "path": ["api", "auth", "logout"] }
+          }
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/auth/profile", "host": ["{{baseUrl}}"], "path": ["api", "auth", "profile"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Projects",
+      "description": "CRUD de proyectos",
+      "item": [
+        {
+          "name": "List Projects",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/projects?page=1&limit=10&status=published",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "projects"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "status", "value": "published", "description": "draft|published|archived" },
+                { "key": "category", "value": "", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Project by Slug",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/projects/mi-proyecto", "host": ["{{baseUrl}}"], "path": ["api", "projects", "mi-proyecto"] }
+          }
+        },
+        {
+          "name": "Create Project",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"slug\": \"nuevo-proyecto\",\n    \"title\": \"Nuevo Proyecto\",\n    \"short_description\": \"Descripción corta del proyecto\",\n    \"full_description\": \"Descripción completa y detallada del proyecto...\",\n    \"role\": \"Full Stack Developer\",\n    \"category\": \"web\",\n    \"status\": \"draft\",\n    \"cover_image_url\": \"https://example.com/image.jpg\",\n    \"demo_url\": \"https://demo.example.com\",\n    \"repository_url\": \"https://github.com/user/repo\",\n    \"is_featured\": 0,\n    \"sort_order\": 0\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/projects", "host": ["{{baseUrl}}"], "path": ["api", "projects"] }
+          }
+        },
+        {
+          "name": "Update Project",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Título Actualizado\",\n    \"is_featured\": 1\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/projects/1", "host": ["{{baseUrl}}"], "path": ["api", "projects", "1"] }
+          }
+        },
+        {
+          "name": "Delete Project (Soft)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/projects/1", "host": ["{{baseUrl}}"], "path": ["api", "projects", "1"] }
+          }
+        },
+        {
+          "name": "Publish Project",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/projects/1/publish", "host": ["{{baseUrl}}"], "path": ["api", "projects", "1", "publish"] }
+          }
+        },
+        {
+          "name": "Toggle Like",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/api/projects/1/like", "host": ["{{baseUrl}}"], "path": ["api", "projects", "1", "like"] }
+          }
+        },
+        {
+          "name": "Get Likes Count",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/projects/1/likes", "host": ["{{baseUrl}}"], "path": ["api", "projects", "1", "likes"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Project Images",
+      "description": "Gestión de imágenes de proyectos",
+      "item": [
+        {
+          "name": "Add Image",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"image_url\": \"https://example.com/screenshot.png\",\n    \"alt_text\": \"Captura de pantalla del proyecto\",\n    \"sort_order\": 1\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/projects/1/images", "host": ["{{baseUrl}}"], "path": ["api", "projects", "1", "images"] }
+          }
+        },
+        {
+          "name": "Delete Image",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/projects/images/1", "host": ["{{baseUrl}}"], "path": ["api", "projects", "images", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Project Links",
+      "description": "Gestión de enlaces de proyectos",
+      "item": [
+        {
+          "name": "Add Link",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"link_type\": \"demo\",\n    \"label\": \"Ver Demo\",\n    \"url\": \"https://demo.example.com\",\n    \"sort_order\": 1\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/projects/1/links", "host": ["{{baseUrl}}"], "path": ["api", "projects", "1", "links"] }
+          }
+        },
+        {
+          "name": "Delete Link",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/projects/links/1", "host": ["{{baseUrl}}"], "path": ["api", "projects", "links", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Project Technologies",
+      "description": "Asociar tecnologías a proyectos",
+      "item": [
+        {
+          "name": "Add Technology to Project",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"technology_id\": 1\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/projects/1/technologies", "host": ["{{baseUrl}}"], "path": ["api", "projects", "1", "technologies"] }
+          }
+        },
+        {
+          "name": "Remove Technology from Project",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/projects/1/technologies/1", "host": ["{{baseUrl}}"], "path": ["api", "projects", "1", "technologies", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Project Trash",
+      "description": "Papelera y restauración de proyectos",
+      "item": [
+        {
+          "name": "List Deleted Projects",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/projects/trash?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "projects", "trash"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Restore Project",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/admin/projects/1/restore", "host": ["{{baseUrl}}"], "path": ["api", "admin", "projects", "1", "restore"] }
+          }
+        },
+        {
+          "name": "Permanent Delete",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/admin/projects/1/permanent", "host": ["{{baseUrl}}"], "path": ["api", "admin", "projects", "1", "permanent"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contact",
+      "description": "Formulario de contacto y gestión de mensajes",
+      "item": [
+        {
+          "name": "Submit Contact Form",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Juan Pérez\",\n    \"email\": \"juan@example.com\",\n    \"subject\": \"Consulta sobre servicios\",\n    \"message\": \"Hola, me gustaría saber más sobre tus servicios de desarrollo web.\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/contact", "host": ["{{baseUrl}}"], "path": ["api", "contact"] }
+          }
+        },
+        {
+          "name": "List Messages (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/contact?page=1&limit=10&status=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "contact"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "status", "value": "", "description": "unread|read|replied|archived" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Unread Count",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/admin/contact/unread", "host": ["{{baseUrl}}"], "path": ["api", "admin", "contact", "unread"] }
+          }
+        },
+        {
+          "name": "Get Message by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/admin/contact/1", "host": ["{{baseUrl}}"], "path": ["api", "admin", "contact", "1"] }
+          }
+        },
+        {
+          "name": "Update Message Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"status\": \"read\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/admin/contact/1", "host": ["{{baseUrl}}"], "path": ["api", "admin", "contact", "1"] }
+          }
+        },
+        {
+          "name": "Delete Message",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/admin/contact/1", "host": ["{{baseUrl}}"], "path": ["api", "admin", "contact", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Technologies",
+      "description": "CRUD de tecnologías",
+      "item": [
+        {
+          "name": "List Technologies",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/technologies?page=1&limit=50",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "technologies"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "50" },
+                { "key": "category", "value": "", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Categories",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/technologies/categories", "host": ["{{baseUrl}}"], "path": ["api", "technologies", "categories"] }
+          }
+        },
+        {
+          "name": "Get Technology by Slug",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/technologies/react", "host": ["{{baseUrl}}"], "path": ["api", "technologies", "react"] }
+          }
+        },
+        {
+          "name": "Create Technology",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"React\",\n    \"slug\": \"react\",\n    \"icon_url\": \"https://cdn.example.com/icons/react.svg\",\n    \"category\": \"frontend\",\n    \"proficiency_level\": 90,\n    \"sort_order\": 1\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/technologies", "host": ["{{baseUrl}}"], "path": ["api", "technologies"] }
+          }
+        },
+        {
+          "name": "Update Technology",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"proficiency_level\": 95\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/technologies/1", "host": ["{{baseUrl}}"], "path": ["api", "technologies", "1"] }
+          }
+        },
+        {
+          "name": "Delete Technology",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/technologies/1", "host": ["{{baseUrl}}"], "path": ["api", "technologies", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Settings",
+      "description": "Configuración del sitio",
+      "item": [
+        {
+          "name": "Get Public Settings",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/settings", "host": ["{{baseUrl}}"], "path": ["api", "settings"] }
+          }
+        },
+        {
+          "name": "Get All Settings (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/admin/settings", "host": ["{{baseUrl}}"], "path": ["api", "admin", "settings"] }
+          }
+        },
+        {
+          "name": "Get Settings Groups",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/admin/settings/groups", "host": ["{{baseUrl}}"], "path": ["api", "admin", "settings", "groups"] }
+          }
+        },
+        {
+          "name": "Get Settings by Group",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/admin/settings/group/general", "host": ["{{baseUrl}}"], "path": ["api", "admin", "settings", "group", "general"] }
+          }
+        },
+        {
+          "name": "Get Setting by Key",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/admin/settings/site_name", "host": ["{{baseUrl}}"], "path": ["api", "admin", "settings", "site_name"] }
+          }
+        },
+        {
+          "name": "Set Setting",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"key\": \"site_name\",\n    \"value\": \"Mi Portfolio\",\n    \"group\": \"general\",\n    \"is_public\": true\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/admin/settings", "host": ["{{baseUrl}}"], "path": ["api", "admin", "settings"] }
+          }
+        },
+        {
+          "name": "Bulk Set Settings",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"settings\": [\n        { \"key\": \"site_name\", \"value\": \"Mi Portfolio\", \"group\": \"general\", \"is_public\": true },\n        { \"key\": \"contact_email\", \"value\": \"info@example.com\", \"group\": \"contact\", \"is_public\": true }\n    ]\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/admin/settings/bulk", "host": ["{{baseUrl}}"], "path": ["api", "admin", "settings", "bulk"] }
+          }
+        },
+        {
+          "name": "Delete Setting",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/admin/settings/custom_setting", "host": ["{{baseUrl}}"], "path": ["api", "admin", "settings", "custom_setting"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "description": "Rastreo y análisis de eventos",
+      "item": [
+        {
+          "name": "Track Event",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"event_type\": \"page_view\",\n    \"page_url\": \"/projects/mi-proyecto\",\n    \"referrer\": \"https://google.com\",\n    \"metadata\": {\n        \"source\": \"organic\"\n    }\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/analytics/track", "host": ["{{baseUrl}}"], "path": ["api", "analytics", "track"] }
+          }
+        },
+        {
+          "name": "List Events (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/analytics?page=1&limit=50",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "analytics"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "50" },
+                { "key": "event_type", "value": "", "disabled": true },
+                { "key": "start_date", "value": "", "disabled": true },
+                { "key": "end_date", "value": "", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/analytics/summary?days=30",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "analytics", "summary"],
+              "query": [
+                { "key": "days", "value": "30" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Event Types",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/admin/analytics/types", "host": ["{{baseUrl}}"], "path": ["api", "admin", "analytics", "types"] }
+          }
+        },
+        {
+          "name": "Cleanup Old Events",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"days_to_keep\": 90\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/admin/analytics/cleanup", "host": ["{{baseUrl}}"], "path": ["api", "admin", "analytics", "cleanup"] }
+          }
+        },
+        {
+          "name": "Delete Event",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/admin/analytics/1", "host": ["{{baseUrl}}"], "path": ["api", "admin", "analytics", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audit",
+      "description": "Auditoría y logs del sistema",
+      "item": [
+        {
+          "name": "List Audit Logs",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/audit?page=1&limit=50",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "audit"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "50" },
+                { "key": "action", "value": "", "disabled": true },
+                { "key": "entity_type", "value": "", "disabled": true },
+                { "key": "user_id", "value": "", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Audit Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/audit/stats?days=30",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "audit", "stats"],
+              "query": [
+                { "key": "days", "value": "30" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Failed Logins",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/audit/failed-logins?page=1&limit=50",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "audit", "failed-logins"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "50" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Entity History",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/admin/audit/entity/project/1", "host": ["{{baseUrl}}"], "path": ["api", "admin", "audit", "entity", "project", "1"] }
+          }
+        },
+        {
+          "name": "Get Audit Log by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/admin/audit/1", "host": ["{{baseUrl}}"], "path": ["api", "admin", "audit", "1"] }
+          }
+        },
+        {
+          "name": "Cleanup Old Logs",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"days_to_keep\": 90\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/admin/audit/cleanup", "host": ["{{baseUrl}}"], "path": ["api", "admin", "audit", "cleanup"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health",
+      "description": "Estado del servicio",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/health", "host": ["{{baseUrl}}"], "path": ["api", "health"] }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,29 +1,19 @@
+import { Env } from './shared/types';
+import { Router } from './router';
+
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    const url = new URL(request.url);
-
-    // Ruta raíz
-    if (url.pathname === '/') {
-      return new Response('Portfolio Backend API', {
-        status: 200,
+    // Verificar variables de entorno
+    if (!env.JWT_SECRET) {
+      console.error('JWT_SECRET no está configurado');
+      return new Response(JSON.stringify({ error: 'Error de configuración del servidor' }), {
+        status: 500,
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
-    // Ruta de health check
-    if (url.pathname === '/health') {
-      return new Response(JSON.stringify({ status: 'ok' }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    // 404
-    return new Response('Not Found', { status: 404 });
+    const router = new Router(env);
+    return router.handle(request);
   },
 };
 
-interface Env {}
-export interface ExecutionContext {
-  waitUntil(promise: Promise<void>): void;
-}
