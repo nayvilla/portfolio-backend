@@ -15,6 +15,7 @@ Backend seguro y escalable para portafolio personal construido con **Cloudflare 
 - **JWT Authentication** - Tokens seguros con expiración de 24h
 - **SQL Injection Prevention** - Prepared statements automáticos
 - **Input Validation & Sanitization** - Validadores especializados
+- **Advanced Email Validation** - Sintaxis + Detecta desechables + Validación MX Records
 - **Rate Limiting** - 5 mensajes de contacto por IP/hora
 - **Password Hashing** - SHA-256
 - **CORS Headers** - Control de orígenes
@@ -519,6 +520,8 @@ curl http://localhost:8787/api/projects/1/likes
 ### POST `/api/contact`
 Enviar mensaje de contacto (público, rate limited: 5/hora).
 
+**Validación de email:** Sintaxis + Detectar desechables + Validación de MX Records
+
 ```bash
 curl -X POST http://localhost:8787/api/contact \
   -H "Content-Type: application/json" \
@@ -535,10 +538,15 @@ curl -X POST http://localhost:8787/api/contact \
 | Campo | Tipo | Requerido | Descripción |
 |-------|------|-----------|-------------|
 | name | string | ✅ | Nombre (2-100 caracteres) |
-| email | string | ✅ | Email válido |
+| email | string | ✅ | Email válido (validación avanzada) |
 | subject | string | ❌ | Asunto (máx 200 caracteres) |
 | message | string | ✅ | Mensaje (10-5000 caracteres) |
 | purpose | string | ❌ | Propósito del mensaje |
+
+**Validación de Email (3 capas):**
+1. ✅ **Sintaxis** - Formato RFC 5322 válido
+2. ✅ **Desechables** - Rechaza tempmail, 10minutemail, guerrillamail, etc.
+3. ✅ **MX Records** - Valida que el dominio existe usando DNS lookup
 
 **Valores válidos para `purpose`:**
 | Valor | Descripción |
@@ -553,7 +561,26 @@ curl -X POST http://localhost:8787/api/contact \
 ```json
 {
   "success": true,
-  "message": "Message sent successfully"
+  "data": { "id": 42 },
+  "message": "Mensaje enviado exitosamente. Te responderemos pronto."
+}
+```
+
+**Error Response - Email desechable (400):**
+```json
+{
+  "success": false,
+  "error": "No se aceptan emails desechables/temporales",
+  "code": "VALIDATION_ERROR"
+}
+```
+
+**Error Response - Dominio no existe (400):**
+```json
+{
+  "success": false,
+  "error": "El dominio de email no existe",
+  "code": "VALIDATION_ERROR"
 }
 ```
 
@@ -561,7 +588,8 @@ curl -X POST http://localhost:8787/api/contact \
 ```json
 {
   "success": false,
-  "error": "Rate limit exceeded. Please try again later."
+  "error": "Has enviado demasiados mensajes. Intenta más tarde.",
+  "code": "RATE_LIMIT_ERROR"
 }
 ```
 

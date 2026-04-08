@@ -333,7 +333,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"name\": \"Juan Pérez\",\n    \"email\": \"juan@example.com\",\n    \"subject\": \"Consulta sobre servicios\",\n    \"message\": \"Hola, me gustaría saber más sobre tus servicios de desarrollo web.\"\n}"
+              "raw": "{\n    \"name\": \"Juan Pérez\",\n    \"email\": \"juan@example.com\",\n    \"subject\": \"Consulta sobre servicios\",\n    \"message\": \"Hola, me gustaría saber más sobre tus servicios de desarrollo web.\",\n    \"purpose\": \"freelance\"\n}"
             },
             "url": { "raw": "{{baseUrl}}/api/contact", "host": ["{{baseUrl}}"], "path": ["api", "contact"] }
           }

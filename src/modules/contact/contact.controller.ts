@@ -3,7 +3,7 @@ import { successResponse, errorResponse } from '../../shared/utils/response';
 import { requireAuth } from '../../shared/middlewares/auth.middleware';
 import { getClientIP } from '../../shared/middlewares/rate-limit.middleware';
 import { ContactService } from './contact.service';
-import { CreateContactInput, validateContactMessage, validateStatusUpdate } from './contact.validator';
+import { CreateContactInput, validateContactMessage, validateContactMessageAsync, validateStatusUpdate } from './contact.validator';
 
 export class ContactController {
   private service: ContactService;
@@ -17,7 +17,9 @@ export class ContactController {
   async submit(request: Request): Promise<Response> {
     try {
       const data = await request.json() as CreateContactInput;
-      const errors = validateContactMessage(data);
+      
+      // Validación con DNS lookup (asincrónica)
+      const errors = await validateContactMessageAsync(data);
       if (errors.length > 0) {
         return errorResponse(errors[0].message);
       }
