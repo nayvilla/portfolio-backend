@@ -1,4 +1,4 @@
-# 🎨 Portfolio Backend API
+﻿# 🎨 Portfolio Backend API
 
 Backend seguro y escalable para portafolio personal construido con **Cloudflare Workers** y **D1 Database**.
 
@@ -278,11 +278,11 @@ curl http://localhost:8787/api/projects/mi-proyecto
 
 ---
 
-### POST `/api/admin/projects` 🔒
+### POST `/api/projects` 🔒
 Crear nuevo proyecto.
 
 ```bash
-curl -X POST http://localhost:8787/api/admin/projects \
+curl -X POST http://localhost:8787/api/projects \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -d '{
@@ -312,11 +312,11 @@ curl -X POST http://localhost:8787/api/admin/projects \
 
 ---
 
-### PUT `/api/admin/projects/:id` 🔒
+### PUT `/api/projects/:id` 🔒
 Actualizar proyecto existente.
 
 ```bash
-curl -X PUT http://localhost:8787/api/admin/projects/1 \
+curl -X PUT http://localhost:8787/api/projects/1 \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -d '{
@@ -340,11 +340,11 @@ curl -X PUT http://localhost:8787/api/admin/projects/1 \
 
 ---
 
-### DELETE `/api/admin/projects/:id` 🔒
+### DELETE `/api/projects/:id` 🔒
 Eliminar proyecto.
 
 ```bash
-curl -X DELETE http://localhost:8787/api/admin/projects/1 \
+curl -X DELETE http://localhost:8787/api/projects/1 \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
@@ -358,11 +358,11 @@ curl -X DELETE http://localhost:8787/api/admin/projects/1 \
 
 ---
 
-### PUT `/api/admin/projects/:id/publish` 🔒
+### POST `/api/projects/:id/publish` 🔒
 Publicar proyecto (cambiar status a "published").
 
 ```bash
-curl -X PUT http://localhost:8787/api/admin/projects/1/publish \
+curl -X POST http://localhost:8787/api/projects/1/publish \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
@@ -378,18 +378,11 @@ curl -X PUT http://localhost:8787/api/admin/projects/1/publish \
 
 ### Project Images
 
-#### GET `/api/projects/:projectId/images`
-Listar imágenes de un proyecto.
-
-```bash
-curl http://localhost:8787/api/projects/1/images
-```
-
-#### POST `/api/admin/projects/:projectId/images` 🔒
+#### POST `/api/projects/:id/images` 🔒
 Agregar imagen a proyecto.
 
 ```bash
-curl -X POST http://localhost:8787/api/admin/projects/1/images \
+curl -X POST http://localhost:8787/api/projects/1/images \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -d '{
@@ -400,11 +393,11 @@ curl -X POST http://localhost:8787/api/admin/projects/1/images \
   }'
 ```
 
-#### DELETE `/api/admin/projects/images/:imageId` 🔒
+#### DELETE `/api/projects/images/:id` 🔒
 Eliminar imagen.
 
 ```bash
-curl -X DELETE http://localhost:8787/api/admin/projects/images/1 \
+curl -X DELETE http://localhost:8787/api/projects/images/1 \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
@@ -412,18 +405,11 @@ curl -X DELETE http://localhost:8787/api/admin/projects/images/1 \
 
 ### Project Links
 
-#### GET `/api/projects/:projectId/links`
-Listar enlaces de un proyecto.
-
-```bash
-curl http://localhost:8787/api/projects/1/links
-```
-
-#### POST `/api/admin/projects/:projectId/links` 🔒
+#### POST `/api/projects/:id/links` 🔒
 Agregar enlace a proyecto.
 
 ```bash
-curl -X POST http://localhost:8787/api/admin/projects/1/links \
+curl -X POST http://localhost:8787/api/projects/1/links \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -d '{
@@ -435,11 +421,11 @@ curl -X POST http://localhost:8787/api/admin/projects/1/links \
 
 **link_type options:** `github`, `demo`, `documentation`, `other`
 
-#### DELETE `/api/admin/projects/links/:linkId` 🔒
+#### DELETE `/api/projects/links/:id` 🔒
 Eliminar enlace.
 
 ```bash
-curl -X DELETE http://localhost:8787/api/admin/projects/links/1 \
+curl -X DELETE http://localhost:8787/api/projects/links/1 \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
@@ -447,18 +433,11 @@ curl -X DELETE http://localhost:8787/api/admin/projects/links/1 \
 
 ### Project Technologies
 
-#### GET `/api/projects/:projectId/technologies`
-Listar tecnologías de un proyecto.
-
-```bash
-curl http://localhost:8787/api/projects/1/technologies
-```
-
-#### POST `/api/admin/projects/:projectId/technologies` 🔒
+#### POST `/api/projects/:id/technologies` 🔒
 Asociar tecnología a proyecto.
 
 ```bash
-curl -X POST http://localhost:8787/api/admin/projects/1/technologies \
+curl -X POST http://localhost:8787/api/projects/1/technologies \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -d '{
@@ -466,11 +445,11 @@ curl -X POST http://localhost:8787/api/admin/projects/1/technologies \
   }'
 ```
 
-#### DELETE `/api/admin/projects/:projectId/technologies/:techId` 🔒
+#### DELETE `/api/projects/:projectId/technologies/:techId` 🔒
 Desasociar tecnología de proyecto.
 
 ```bash
-curl -X DELETE http://localhost:8787/api/admin/projects/1/technologies/5 \
+curl -X DELETE http://localhost:8787/api/projects/1/technologies/5 \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
@@ -478,7 +457,7 @@ curl -X DELETE http://localhost:8787/api/admin/projects/1/technologies/5 \
 
 ### Project Likes
 
-#### POST `/api/projects/:projectId/like`
+#### POST `/api/projects/:id/like`
 Dar like a un proyecto (público, basado en IP).
 
 ```bash
@@ -496,7 +475,7 @@ curl -X POST http://localhost:8787/api/projects/1/like
 }
 ```
 
-#### GET `/api/projects/:projectId/likes`
+#### GET `/api/projects/:id/likes`
 Obtener contador de likes.
 
 ```bash
@@ -650,11 +629,11 @@ curl http://localhost:8787/api/admin/contact/1 \
 
 ---
 
-### PUT `/api/admin/contact/:id/status` 🔒
+### PUT `/api/admin/contact/:id` 🔒
 Actualizar estado del mensaje.
 
 ```bash
-curl -X PUT http://localhost:8787/api/admin/contact/1/status \
+curl -X PUT http://localhost:8787/api/admin/contact/1 \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -d '{
@@ -684,7 +663,27 @@ curl -X DELETE http://localhost:8787/api/admin/contact/1 \
 
 ---
 
-## � Sistema de Notificaciones
+### GET `/api/admin/contact/unread` 🔒
+Obtener conteo de mensajes no leídos.
+
+```bash
+curl http://localhost:8787/api/admin/contact/unread \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "unread": 5
+  }
+}
+```
+
+---
+
+## 📢 Sistema de Notificaciones
 
 El backend envía notificaciones automáticas a través de múltiples canales cuando ocurren eventos importantes.
 
@@ -810,11 +809,35 @@ curl http://localhost:8787/api/technologies/typescript
 
 ---
 
-### POST `/api/admin/technologies` 🔒
+### GET `/api/technologies/categories`
+Obtener lista de categorías de tecnologías.
+
+```bash
+curl http://localhost:8787/api/technologies/categories
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": [
+    "language",
+    "frontend",
+    "backend",
+    "database",
+    "devops",
+    "tool"
+  ]
+}
+```
+
+---
+
+### POST `/api/technologies` 🔒
 Crear tecnología.
 
 ```bash
-curl -X POST http://localhost:8787/api/admin/technologies \
+curl -X POST http://localhost:8787/api/technologies \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -d '{
@@ -841,11 +864,11 @@ curl -X POST http://localhost:8787/api/admin/technologies \
 
 ---
 
-### PUT `/api/admin/technologies/:id` 🔒
+### PUT `/api/technologies/:id` 🔒
 Actualizar tecnología.
 
 ```bash
-curl -X PUT http://localhost:8787/api/admin/technologies/3 \
+curl -X PUT http://localhost:8787/api/technologies/3 \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -d '{
@@ -855,11 +878,11 @@ curl -X PUT http://localhost:8787/api/admin/technologies/3 \
 
 ---
 
-### DELETE `/api/admin/technologies/:id` 🔒
+### DELETE `/api/technologies/:id` 🔒
 Eliminar tecnología.
 
 ```bash
-curl -X DELETE http://localhost:8787/api/admin/technologies/3 \
+curl -X DELETE http://localhost:8787/api/technologies/3 \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
@@ -926,23 +949,25 @@ curl http://localhost:8787/api/admin/settings \
 
 ---
 
-### PUT `/api/admin/settings/:key` 🔒
-Actualizar configuración.
+### GET `/api/admin/settings/:key` 🔒
+Obtener configuración por clave.
 
 ```bash
-curl -X PUT http://localhost:8787/api/admin/settings/site_title \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -d '{
-    "value": "Nuevo Título del Portafolio"
-  }'
+curl http://localhost:8787/api/admin/settings/site_title \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
 **Response (200):**
 ```json
 {
   "success": true,
-  "message": "Setting updated successfully"
+  "data": {
+    "setting_key": "site_title",
+    "setting_value": "Mi Portfolio",
+    "value_type": "string",
+    "setting_group": "general",
+    "is_public": 1
+  }
 }
 ```
 
@@ -962,6 +987,110 @@ curl -X POST http://localhost:8787/api/admin/settings \
     "setting_group": "custom",
     "is_public": false
   }'
+```
+
+---
+
+### GET `/api/admin/settings/groups` 🔒
+Obtener lista de grupos de configuración.
+
+```bash
+curl http://localhost:8787/api/admin/settings/groups \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": [
+    "general",
+    "social",
+    "seo",
+    "analytics",
+    "notifications"
+  ]
+}
+```
+
+---
+
+### GET `/api/admin/settings/group/:group` 🔒
+Obtener configuraciones por grupo.
+
+```bash
+curl http://localhost:8787/api/admin/settings/group/social \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "setting_key": "github_url",
+      "setting_value": "https://github.com/username",
+      "value_type": "string",
+      "setting_group": "social",
+      "is_public": 1
+    },
+    {
+      "setting_key": "linkedin_url",
+      "setting_value": "https://linkedin.com/in/username",
+      "value_type": "string",
+      "setting_group": "social",
+      "is_public": 1
+    }
+  ]
+}
+```
+
+---
+
+### POST `/api/admin/settings/bulk` 🔒
+Actualizar múltiples configuraciones de una vez.
+
+```bash
+curl -X POST http://localhost:8787/api/admin/settings/bulk \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{
+    "settings": [
+      { "setting_key": "site_title", "setting_value": "Mi Portfolio" },
+      { "setting_key": "github_url", "setting_value": "https://github.com/me" },
+      { "setting_key": "contact_email", "setting_value": "me@example.com" }
+    ]
+  }'
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "updated": 3
+  },
+  "message": "3 settings actualizados exitosamente"
+}
+```
+
+---
+
+### DELETE `/api/admin/settings/:key` 🔒
+Eliminar configuración.
+
+```bash
+curl -X DELETE http://localhost:8787/api/admin/settings/custom_setting \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "message": "Setting eliminado exitosamente"
+}
 ```
 
 ---
@@ -992,6 +1121,77 @@ curl -X POST http://localhost:8787/api/analytics/track \
 {
   "success": true,
   "message": "Event tracked"
+}
+```
+
+---
+
+### GET `/api/admin/analytics` 🔒
+Listar eventos analíticos con paginación y filtros.
+
+```bash
+# Básico
+curl http://localhost:8787/api/admin/analytics \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+# Con filtros
+curl "http://localhost:8787/api/admin/analytics?page=1&limit=20&event_type=page_view&start_date=2024-01-01&end_date=2024-01-31" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+**Query Parameters:**
+- `page` (default: 1): Página de resultados
+- `limit` (default: 20, max: 100): Resultados por página
+- `event_type`: Filtrar por tipo de evento
+- `start_date`: Fecha inicio (YYYY-MM-DD)
+- `end_date`: Fecha fin (YYYY-MM-DD)
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "events": [
+      {
+        "id": 1,
+        "event_type": "page_view",
+        "page_path": "/projects/mi-proyecto",
+        "project_id": 1,
+        "metadata": { "referrer": "https://google.com" },
+        "created_at": "2024-01-15T10:30:00.000Z"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 20,
+      "total": 150,
+      "pages": 8
+    }
+  }
+}
+```
+
+---
+
+### GET `/api/admin/analytics/types` 🔒
+Obtener lista de tipos de eventos registrados.
+
+```bash
+curl http://localhost:8787/api/admin/analytics/types \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": [
+    "page_view",
+    "project_view",
+    "link_click",
+    "contact_form",
+    "download"
+  ]
 }
 ```
 
@@ -1037,16 +1237,16 @@ curl "http://localhost:8787/api/admin/analytics/summary?days=7" \
 
 ---
 
-### DELETE `/api/admin/analytics/cleanup` 🔒
+### POST `/api/admin/analytics/cleanup` 🔒
 Limpiar eventos antiguos.
 
 ```bash
 # Eliminar eventos de más de 90 días (default)
-curl -X DELETE http://localhost:8787/api/admin/analytics/cleanup \
+curl -X POST http://localhost:8787/api/admin/analytics/cleanup \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 
 # Eliminar eventos de más de 30 días
-curl -X DELETE "http://localhost:8787/api/admin/analytics/cleanup?days=30" \
+curl -X POST "http://localhost:8787/api/admin/analytics/cleanup?days=30" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
@@ -1063,13 +1263,31 @@ curl -X DELETE "http://localhost:8787/api/admin/analytics/cleanup?days=30" \
 
 ---
 
+### DELETE `/api/admin/analytics/:id` 🔒
+Eliminar evento analítico específico.
+
+```bash
+curl -X DELETE http://localhost:8787/api/admin/analytics/123 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "message": "Evento eliminado exitosamente"
+}
+```
+
+---
+
 ## 🏥 Health Check
 
-### GET `/health`
+### GET `/api/health`
 Verificar estado del servidor.
 
 ```bash
-curl http://localhost:8787/health
+curl http://localhost:8787/api/health
 ```
 
 **Response (200):**
@@ -1178,6 +1396,33 @@ Obtener historial de cambios de una entidad específica.
 ```bash
 curl http://localhost:8787/api/admin/audit/entity/project/1 \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+---
+
+### GET `/api/admin/audit/:id` 🔒
+Obtener entrada de auditoría por ID.
+
+```bash
+curl http://localhost:8787/api/admin/audit/123 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 123,
+    "action": "project.update",
+    "entity_type": "project",
+    "entity_id": 1,
+    "admin_id": 1,
+    "changes": { "title": ["Viejo Título", "Nuevo Título"] },
+    "ip_address": "192.168.1.1",
+    "created_at": "2024-01-15T10:30:00.000Z"
+  }
+}
 ```
 
 ---
